@@ -1,0 +1,176 @@
+-- Services
+local TweenService = game:GetService("TweenService")
+
+-- Create GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game:GetService("CoreGui")
+
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 400, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.Visible = true
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+-- Add Rainbow UIGradient to Main Frame
+local mainGradient = Instance.new("UIGradient")
+mainGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 255))
+}
+mainGradient.Rotation = 45
+mainGradient.Parent = mainFrame
+
+-- Function to create gradient buttons
+local function createButton(parent, position, size, buttonText)
+    local button = Instance.new("TextButton")
+    button.Size = size
+    button.Position = position
+    button.Text = buttonText
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 18
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    button.BorderSizePixel = 0
+    button.AutoButtonColor = false
+    button.Parent = parent
+
+    -- Add Gradient Effect
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 170, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 128))
+    }
+    gradient.Rotation = 45
+    gradient.Parent = button
+
+    -- Add Rounded Corners
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = button
+
+    -- Button Animation
+    local shrink = TweenService:Create(button, TweenInfo.new(0.1), {Size = size - UDim2.new(0, 5, 0, 5)})
+    local grow = TweenService:Create(button, TweenInfo.new(0.1), {Size = size})
+
+    button.MouseButton1Click:Connect(function()
+        shrink:Play()
+        shrink.Completed:Wait()
+        grow:Play()
+    end)
+
+    return button
+end
+
+-- Topbar (Backdoor Hub name with rainbow effect)
+local topbar = Instance.new("TextLabel")
+topbar.Size = UDim2.new(1, 0, 0, 40)
+topbar.Position = UDim2.new(0, 0, 0, 0)
+topbar.BackgroundTransparency = 1
+topbar.Text = "Backdoor Hub"
+topbar.TextColor3 = Color3.new(1, 1, 1)
+topbar.Font = Enum.Font.GothamBold
+topbar.TextSize = 24
+topbar.TextStrokeTransparency = 0.5
+topbar.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+topbar.TextScaled = true
+topbar.Parent = mainFrame
+
+-- Rainbow effect for the topbar name
+local topbarGradient = Instance.new("UIGradient")
+topbarGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 255))
+}
+topbarGradient.Rotation = 45
+topbarGradient.Parent = topbar
+
+-- Open/Close Button (Top-Left)
+local toggleButton = createButton(screenGui, UDim2.new(0, 10, 0, 10), UDim2.new(0, 120, 0, 40), "Backdoor Hub")
+toggleButton.TextSize = 14
+local frameVisible = true
+
+-- Open/Close Button Animation
+local openCloseTweenIn = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {Size = UDim2.new(0, 400, 0, 300)})
+local openCloseTweenOut = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Bounce, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)})
+
+toggleButton.MouseButton1Click:Connect(function()
+    frameVisible = not frameVisible
+    if frameVisible then
+        mainFrame.Visible = true
+        openCloseTweenIn:Play()
+    else
+        openCloseTweenOut:Play()
+        wait(0.5) -- Wait for animation to complete before hiding
+        mainFrame.Visible = false
+    end
+end)
+
+-- Big Scan Button
+local scanButton = createButton(mainFrame, UDim2.new(0.1, 0, 0.2, 0), UDim2.new(0.8, 0, 0.25, 0), "Scan")
+
+-- Scanning Text
+local scanningLabel = Instance.new("TextLabel")
+scanningLabel.Size = UDim2.new(1, 0, 0.15, 0)
+scanningLabel.Position = UDim2.new(0, 0, 0.4, 0)
+scanningLabel.BackgroundTransparency = 1
+scanningLabel.Text = "Scanning..."
+scanningLabel.TextColor3 = Color3.new(1, 1, 1)
+scanningLabel.Font = Enum.Font.GothamBold
+scanningLabel.TextSize = 20
+scanningLabel.Visible = false
+scanningLabel.Parent = mainFrame
+
+-- Textbox for Script Input
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+textBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+textBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+textBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+textBox.Text = "require(6666666666).???(\"name\")"
+textBox.Font = Enum.Font.Gotham
+textBox.TextSize = 18
+textBox.Visible = false
+textBox.Parent = mainFrame
+
+-- SS EXECUTE Button
+local executeButton = createButton(mainFrame, UDim2.new(0.1, 0, 0.6, 0), UDim2.new(0.8, 0, 0.15, 0), "SS EXECUTE")
+executeButton.Visible = false
+
+-- Clear Button (Hidden until Textbox and SS EXECUTE appear)
+local clearButton = createButton(mainFrame, UDim2.new(0.1, 0, 0.8, 0), UDim2.new(0.8, 0, 0.15, 0), "Clear")
+clearButton.Visible = false  -- Initially hidden
+
+clearButton.MouseButton1Click:Connect(function()
+    textBox.Text = ""  -- Clear the text box content
+end)
+
+-- Scan Button Functionality
+scanButton.MouseButton1Click:Connect(function()
+    scanButton.Visible = false
+    scanningLabel.Visible = true
+    wait(5)
+    scanningLabel.Visible = false
+    textBox.Visible = true
+    executeButton.Visible = true
+    clearButton.Visible = true  -- Show the Clear button after Scan
+end)
+
+-- SS EXECUTE Button Functionality
+executeButton.MouseButton1Click:Connect(function()
+    local scriptToExecute = textBox.Text
+    if loadstring then
+        local success, err = pcall(function()
+            loadstring(scriptToExecute)()
+        end)
+        if not success then
+            warn("Execution Error: " .. err)
+        end
+    else
+        warn("Loadstring is not supported.")
+    end
+end)
